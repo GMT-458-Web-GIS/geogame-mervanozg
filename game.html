@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoHunt - Oyun</title> <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    
+    <link rel="stylesheet" href="game.css" /> 
+    
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/jquery"></script>
+    <script src="https://unpkg.com/leaflet-ajax/dist/leaflet.ajax.min.js"></script>
+    <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+    <script src="game.js" defer></script>
+    
+    </head>
+<body>
+    <div id="header">
+        <div id="lives-display">❤❤❤</div>
+        <div id="header-title">GeoHunt</div>
+        <div id="score-timer-wrapper">
+            <div>Toplam Puan: <span id="score">0</span></div>
+            <div id="timer">100</div>
+        </div>
+    </div>
+
+    <div id="map"></div>
+    <div class="overlay"></div>
+
+    <div class="popup">
+        <div class="popup-header">
+            <div class="timer">Süre: <span id="question-timer">15</span>s</div>
+            <div class="score">Puan: <span id="score">0</span></div>
+        </div>
+        <div class="popup-content">
+            <img id="clue-image" src="" alt="İpucu Görseli">
+            <p id="clue-text">İpucu: </p>
+            <button id="show-map-button">Haritayı Göster</button>
+            <button id="next-question-button" style="display: none;">Yeni Soruya Geç</button>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">
+        <p id="notification-text"></p>
+        <div class="notification-buttons">
+            <button class="next-button" onclick="nextQuestion()">Sıradaki Soru</button>
+            <button class="retry-button" onclick="retryQuestion()">Tekrar Dene</button>
+        </div>
+    </div>
+
+    <div class="notification" id="time-up-notification">
+        <p>Süreniz doldu! Tekrar deneyebilir veya sıradaki soruya geçebilirsiniz.</p>
+        <div class="notification-buttons">
+            <button class="retry-button" onclick="retryTimeUpQuestion()">Tekrar Dene</button>
+            <button class="next-button" onclick="closeTimeUpNotification()">Sıradaki Soru</button>
+        </div>
+    </div>
+</body>
+</html>

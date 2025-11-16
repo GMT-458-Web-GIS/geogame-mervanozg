@@ -1,0 +1,461 @@
+/* Google Font Eklemesi */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&family=Playfair+Display:wght@700;900&display=swap');
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes shimmer {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(88, 86, 214, 0.4);
+    }
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.7);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes popInNoMove {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.7);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes successPulse {
+    from {
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        box-shadow: 0 0 30px rgba(46, 204, 113, 0.4);
+    }
+    to {
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        box-shadow: 0 20px 60px rgba(46, 204, 113, 0.4), 0 0 60px rgba(46, 204, 113, 0.3);
+    }
+}
+
+@keyframes errorShake {
+    from {
+        transform: scale(1);
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        box-shadow: 0 0 30px rgba(231, 76, 60, 0.4);
+    }
+    to {
+        transform: scale(1);
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        box-shadow: 0 20px 60px rgba(231, 76, 60, 0.4), 0 0 60px rgba(231, 76, 60, 0.3);
+    }
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0f0f1e 0%, #1a0f2e 100%);
+    font-family: 'Poppins', Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#header {
+    background: linear-gradient(90deg, #4236b1 0%, #2a237a 50%, #3f2f8f 100%);
+    color: white;
+    text-align: center;
+    padding: 20px 30px;
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    position: relative;
+    width: 100%;
+    box-shadow: 0 8px 30px rgba(66, 54, 177, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid rgba(136, 243, 243, 0.2);
+    animation: slideDown 0.6s ease-out;
+    overflow: hidden;
+}
+
+#header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(136, 243, 243, 0.15) 50%, transparent 100%);
+    opacity: 0;
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+#header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(136, 243, 243, 0.6), transparent);
+    animation: shimmer 2s ease-in-out infinite;
+}
+
+#header-title {
+    flex-grow: 1;
+    text-align: center;
+    margin-left: 150px;
+    font-family: 'Playfair Display', serif;
+    background: linear-gradient(90deg, #88F3F3 0%, #88F3F3 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 4px 15px rgba(136, 243, 243, 0.3);
+    animation: slideDown 0.6s ease-out 0.1s both;
+    position: relative;
+}
+
+#lives-display {
+    font-size: 28px;
+    min-width: 120px;
+    text-align: left;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: pulse 1.5s ease-in-out infinite;
+    color: #ff6b6b;
+}
+
+#score-timer-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    min-width: 140px;
+    font-size: 18px;
+    font-weight: 700;
+    gap: 5px;
+    animation: slideDown 0.6s ease-out 0.2s both;
+    position: relative;
+}
+
+#timer {
+    font-size: 26px;
+    font-weight: 900;
+    color: #ffd700;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), transparent);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+    animation: pulse 1s ease-in-out infinite;
+    transition: all 0.3s ease;
+}
+
+#timer.warning {
+    background: linear-gradient(135deg, rgba(255, 100, 0, 0.2), transparent);
+    color: #ff6400;
+    border-color: rgba(255, 100, 0, 0.5);
+    box-shadow: 0 0 20px rgba(255, 100, 0, 0.4);
+    animation: pulse 0.6s ease-in-out infinite;
+}
+
+#score {
+    font-size: 20px;
+    font-weight: 700;
+    color: #4ade80;
+    background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), transparent);
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    animation: slideDown 0.6s ease-out 0.2s both;
+}
+
+#map {
+    width: 100%;
+    height: calc(100vh - 70px);
+    background-color: #c2ece7;
+}
+
+.city-label {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(30, 20, 60, 0.85) 100%);
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    border-radius: 8px;
+    text-align: center;
+    white-space: nowrap;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6), 0 0 20px rgba(136, 243, 243, 0.2);
+    border: 1.5px solid rgba(136, 243, 243, 0.4);
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+.city-label:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8), 0 0 30px rgba(136, 243, 243, 0.4);
+}
+
+/* --- Popup ve Bildirim Stilleri --- */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(30, 20, 60, 0.8));
+    z-index: 999;
+    backdrop-filter: blur(8px);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.popup, .notification {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #ffffff 0%, #f0f0ff 100%);
+    padding: 40px 45px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 60px rgba(66, 54, 177, 0.3);
+    z-index: 1000;
+    border-radius: 20px;
+    text-align: center;
+    width: 90%;
+    max-width: 550px;
+    border: 2px solid rgba(136, 243, 243, 0.3);
+}
+
+.popup {
+    animation: popInNoMove 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.notification.success-animation {
+    animation: popInNoMove 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.notification.error-animation {
+    animation: popInNoMove 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+/* Doğru/Yanlış Bildirim Stilleri */
+.notification.success {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%) !important;
+    border: 2px solid rgba(46, 204, 113, 0.6) !important;
+    box-shadow: 0 20px 60px rgba(46, 204, 113, 0.4), 0 0 60px rgba(46, 204, 113, 0.3) !important;
+}
+
+.notification.success #notification-text {
+    color: white !important;
+    font-weight: 700;
+}
+
+.notification.error-animation #notification-text {
+    color: white !important;
+    font-weight: 700;
+}
+
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.timer, .score {
+    font-size: 18px;
+    font-weight: 700;
+    padding: 10px 16px;
+    border-radius: 10px;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.timer {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.score {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+}
+
+.popup-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.popup-content img {
+    width: 100%;
+    max-height: 350px;
+    object-fit: contain;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    background: #f0f0f0;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.popup-content p {
+    margin-bottom: 25px;
+    font-size: 22px;
+    font-weight: 700;
+    color: #2c3e50;
+    line-height: 1.6;
+}
+
+/* --- Buton Stilleri (Genel) --- */
+button, .button {
+    padding: 14px 30px;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+button::before, .button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+button:hover::before, .button:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+button:hover, .button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+button:active, .button:active {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Ana Eylem Butonu (Mavi) */
+#show-map-button {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+}
+#show-map-button:hover {
+    background: linear-gradient(135deg, #0086ff 0%, #0042a2 100%);
+    box-shadow: 0 10px 30px rgba(0, 123, 255, 0.5);
+}
+
+.notification-buttons {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+/* Bildirim Butonları */
+.next-button {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    color: white;
+    box-shadow: 0 6px 20px rgba(46, 204, 113, 0.3);
+}
+.next-button:hover {
+    background: linear-gradient(135deg, #3dd979 0%, #1f8445 100%);
+    box-shadow: 0 10px 30px rgba(46, 204, 113, 0.5);
+}
+
+.retry-button {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    color: white;
+    box-shadow: 0 6px 20px rgba(243, 156, 18, 0.3);
+}
+.retry-button:hover {
+    background: linear-gradient(135deg, #f8b500 0%, #d35400 100%);
+    box-shadow: 0 10px 30px rgba(243, 156, 18, 0.5);
+}
+
+.final-score {
+    text-align: center;
+    padding: 30px;
+}
+.final-score h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+    font-weight: 900;
+    color: #2c3e50;
+}
+.final-score p {
+    font-size: 24px;
+    margin: 15px 0;
+    color: #34495e;
+    font-weight: 600;
+}
+
+.final-score button {
+    background: linear-gradient(135deg, #4236b1 0%, #2a237a 100%);
+    color: white;
+    margin-top: 25px;
+    box-shadow: 0 6px 20px rgba(66, 54, 177, 0.3);
+}
+
+.final-score button:hover {
+    background: linear-gradient(135deg, #5140d6 0%, #1f1563 100%);
+    box-shadow: 0 10px 30px rgba(66, 54, 177, 0.5);
+}

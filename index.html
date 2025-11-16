@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CityHunt</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <img src="assets/logo.png" alt="Oyun Logosu" class="logo">
+        
+        <h1>GeoHunt</h1>
+        
+        <input type="text" id="name" placeholder="İsim Soyisim">
+        
+        <button class="start-game" onclick="startGame()">OYUNA BAŞLA</button>
+        
+        <a href="how_to_play.html" class="how-to-play">Nasıl Oynanır ?</a>
+    </div>
+
+    <script>
+        function startGame() {
+            let name = document.getElementById("name").value.trim();
+            console.log(name);
+            window.name = name; // İsmi bir sonraki sayfaya (game.html) taşımak için
+            if (!name) {
+                alert("Lütfen isminizi girin!");
+                return;
+            }
+            
+         
+            window.location.href = "game.html";
+        }
+    </script>
+</body>
+</html>
