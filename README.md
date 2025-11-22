@@ -9,7 +9,7 @@
 </div>
 
 <p align="center">
-  <strong>A fast-paced, map-based geography challenge exploring Türkiye’nin cultural and geographical landmarks.</strong>
+  <strong>A fast-paced, map-based geography challenge exploring Türkiye cultural and geographical landmarks.</strong>
 </p>
 
 ---
