@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GeoHunt - Oyun</title> <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    
+    <title>GeoHunt - Oyun</title> 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="game.css" /> 
     
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -12,15 +12,23 @@
     <script src="https://unpkg.com/leaflet-ajax/dist/leaflet.ajax.min.js"></script>
     <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
     <script src="game.js" defer></script>
-    
-    </head>
+</head>
 <body>
     <div id="header">
-        <div id="lives-display">❤❤❤</div>
-        <div id="header-title">GeoHunt</div>
-        <div id="score-timer-wrapper">
-            <div>Toplam Puan: <span id="score">0</span></div>
-            <div id="timer">100</div>
+        <div class="header-left">
+            <div id="lives-display">❤❤❤</div>
+        </div>
+
+        <div class="header-center">
+            <div id="header-title">GeoHunt</div>
+            <div id="timer-wrapper">
+                <span class="timer-icon">🕒</span>
+                <span id="timer">100</span>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <div id="score-container">Toplam Puan: <span id="score">0</span></div>
         </div>
     </div>
 
@@ -43,8 +51,8 @@
     <div class="notification" id="notification">
         <p id="notification-text"></p>
         <div class="notification-buttons">
-            <button class="next-button" onclick="nextQuestion()">Sıradaki Soru</button>
             <button class="retry-button" onclick="retryQuestion()">Tekrar Dene</button>
+            <button class="next-button" onclick="nextQuestion()">Sıradaki Soru</button>
         </div>
     </div>
 

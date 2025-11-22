@@ -4,6 +4,7 @@ let questionTimer;
 let totalScore = 0;
 let userName = window.name;
 let currentQuestion = 0;
+let correctAnswersCount = 0; // YENİ: Doğru cevap sayacı
 let currentCity = '';
 let questionStartTime;
 const maxTimePerQuestion = 15;
@@ -31,8 +32,7 @@ function countdown() {
         document.getElementById('timer').innerText = timeLeft;
         const timerElement = document.getElementById('timer');
         
-        // Süre 5 saniyeden azsa kırmızı yap
-        if (timeLeft <= 5) {
+        if (timeLeft <= 10) {
             timerElement.classList.add('warning');
         } else {
             timerElement.classList.remove('warning');
@@ -50,16 +50,15 @@ function countdown() {
 function startGame() {
     totalScore = 0;
     currentQuestion = 0;
+    correctAnswersCount = 0; // Sıfırla
     lives = 3;
     timeLeft = 100;
-    // Soruları rastgele sırala
     shuffleArray(questions);
     updateLivesDisplay();
     loadQuestion();
     countdown();
 }
 
-// Shuffle array function
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -67,16 +66,15 @@ function shuffleArray(array) {
     }
 }
 
-// Add this new function to update lives display
 function updateLivesDisplay() {
     const livesElement = document.getElementById('lives-display');
     livesElement.textContent = '❤'.repeat(lives);
 }
 
-// Question loading
 function loadQuestion() {
+    // Güvenlik kontrolü
     if (currentQuestion >= questions.length) {
-        endGame();
+        showFinalScore();
         return;
     }
     
@@ -92,16 +90,15 @@ function loadQuestion() {
     startQuestionTimer(maxTimePerQuestion);
 }
 
-// Timer functions
 function startQuestionTimer(seconds) {
-    let timeLeft = seconds;
-    document.getElementById('question-timer').innerText = timeLeft;
+    let qTime = seconds;
+    document.getElementById('question-timer').innerText = qTime;
     
     clearInterval(questionTimer);
     questionTimer = setInterval(() => {
-        timeLeft--;
-        document.getElementById('question-timer').innerText = timeLeft;
-        if (timeLeft <= 0) {
+        qTime--;
+        document.getElementById('question-timer').innerText = qTime;
+        if (qTime <= 0) {
             clearInterval(questionTimer);
             showTimeUpNotification();
         }
@@ -112,33 +109,27 @@ function startQuestionTimer(seconds) {
 var map = L.map('map', {
     center: [39.0, 35.0],
     zoom: 7,
-    zoomControl: false, // Kontrolleri kapalı tutuyoruz
+    zoomControl: false,
     dragging: false,
     scrollWheelZoom: false,
     doubleClickZoom: false,
     boxZoom: false,
     touchZoom: false,
-    attributionControl: false, // Atıf kontrolünü kapatalım
-    maxBounds: [[36, 25], [42, 45]],
-    maxBoundsViscosity: 1.0
+    attributionControl: false
 });
 
-// YENİ: Profesyonel koyu tema harita altlığı ekliyoruz
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: 'abcd',
     maxZoom: 10,
-    minZoom: 7 // Haritanın çok fazla uzaklaşmasını engelliyoruz
+    minZoom: 6
 }).addTo(map);
 
-// Map interactions
 $.getJSON('https://raw.githubusercontent.com/cihadturhan/tr-geojson/master/geo/tr-cities-utf8.json', function(data) {
     function style(feature) {
         return {
-            color: "#FFF", // Kenarlık rengi (beyaz)
-            weight: 1, // Kenarlık kalınlığı
-            fillColor: "#3a7dca", // İl dolgu rengi (modern bir mavi)
-            fillOpacity: 0.1 // Hafif bir dolgu opaklığı
+            color: "#FFF",
+            weight: 1,
+            fillColor: "#3a7dca",
+            fillOpacity: 0.1
         };
     }
 
@@ -150,16 +141,18 @@ $.getJSON('https://raw.githubusercontent.com/cihadturhan/tr-geojson/master/geo/t
             const pointsEarned = calculateTimeBasedScore(timeElapsed);
             totalScore += pointsEarned;
             
-            // Update both score displays
-            const scoreElements = document.querySelectorAll('#score');
-            scoreElements.forEach(element => {
-                element.textContent = totalScore;
-            });
+            // Doğru cevap sayacını artır
+            correctAnswersCount++;
             
-            currentQuestion++;
+            document.querySelectorAll('#score').forEach(el => el.textContent = totalScore);
             
-            // Check if this was the last question
-            if (currentQuestion >= questions.length) {
+            // DÜZELTME: Soru indeksini burada artırmıyoruz. 
+            // Kullanıcı "Sıradaki Soru" butonuna basınca nextQuestion() içinde artacak.
+            // Sadece son soruysa oyun bitmeli.
+            
+            if (currentQuestion >= questions.length - 1) {
+                // Son soruyu bildi, indeksi artırıp bitiriyoruz
+                currentQuestion++;
                 showFinalScore();
             } else {
                 showNotification(`Doğru! ${pointsEarned} puan kazandınız.`, true);
@@ -171,7 +164,7 @@ $.getJSON('https://raw.githubusercontent.com/cihadturhan/tr-geojson/master/geo/t
             if (lives <= 0) {
                 showGameOver();
             } else {
-                showNotification(`Yanlış cevap! ${lives} hakkınız kaldı. Tekrar deneyiniz.`, false, true);
+                showNotification(`Yanlış cevap! ${lives} hakkınız kaldı.`, false, true);
             }
         }
     }
@@ -180,245 +173,58 @@ $.getJSON('https://raw.githubusercontent.com/cihadturhan/tr-geojson/master/geo/t
         style: style,
         onEachFeature: function (feature, layer) {
             var cityName = feature.properties.name;
-            
-          layer.on({
-        mouseover: function(e) {
-            e.target.setStyle({ 
-                fillColor: "#ffc107", // Üzerine gelince vurgu rengi (altın sarısı)
-                fillOpacity: 0.7 
+            layer.on({
+                mouseover: function(e) {
+                    e.target.setStyle({ fillColor: "#ffc107", fillOpacity: 0.7 });
+                },
+                mouseout: function(e) {
+                    geojsonLayer.resetStyle(e.target);
+                },
+                click: function(e) {
+                    checkAnswer(cityName);
+                }
             });
-        },
-        mouseout: function(e) {
-            geojsonLayer.resetStyle(e.target);
-        },
-        click: function(e) {
-            checkAnswer(cityName);
-        }
-    });
-
-            // Add city labels
             var centroid = turf.centroid(feature).geometry.coordinates;
-            var label = L.divIcon({
-                className: 'city-label',
-                html: cityName,
-                iconSize: null
-            });
+            var label = L.divIcon({ className: 'city-label', html: cityName, iconSize: null });
             L.marker([centroid[1], centroid[0]], { icon: label, interactive: false }).addTo(map);
         }
     }).addTo(map);
 });
 
-// Utility functions
 function calculateTimeBasedScore(timeElapsed) {
     if (timeElapsed >= maxTimePerQuestion) return 0;
     const score = Math.floor(maxScorePerQuestion * (1 - (timeElapsed / maxTimePerQuestion)));
     return Math.max(0, score);
 }
 
+// Notification Sistemi
 function showNotification(message, isSuccess, showRetry = false) {
     const notification = document.getElementById('notification');
     const notificationText = document.getElementById('notification-text');
     const nextButton = notification.querySelector('.next-button');
     const retryButton = notification.querySelector('.retry-button');
     
-    // Tüm sınıfları temizle
     notification.className = 'notification';
     
-    // Doğru/Yanlış animasyonu ekle
-    if (isSuccess && !message.includes('Oyun') && !message.includes('Tebrikler')) {
+    if (isSuccess) {
         notification.classList.add('success');
-        notification.classList.add('success-animation');
-    } else if (!isSuccess && !message.includes('Oyun') && !message.includes('Tebrikler')) {
-        notification.classList.add('error-animation');
+        nextButton.style.display = 'block';
+        retryButton.style.display = 'none';
+    } else {
+        notification.classList.add('error');
+        retryButton.style.display = 'block'; 
+        nextButton.style.display = 'block';
     }
     
     notificationText.innerHTML = message;
-    
-    // Only show buttons if not game over or final score
-    if (!message.includes('Oyun Bitti') && !message.includes('Tebrikler')) {
-        if (isSuccess) {
-            nextButton.style.display = 'block';
-            retryButton.style.display = 'none';
-        } else {
-            nextButton.style.display = 'none';
-            retryButton.style.display = lives > 0 ? 'block' : 'none';
-        }
-    } else {
-        nextButton.style.display = 'none';
-        retryButton.style.display = 'none';
-    }
-    
     notification.style.display = 'block';
 }
 
+// DÜZELTME: Sıradaki soruya geçiş mantığı
 function nextQuestion() {
     document.getElementById('notification').style.display = 'none';
     
-    if (currentQuestion >= questions.length) {
-        endGame();
-    } else {
-        loadQuestion();
-    }
-}
-
-function retryQuestion() {
-    document.getElementById('notification').style.display = 'none';
-    // Reset timer and start again
-    questionStartTime = Date.now();
-    startQuestionTimer(maxTimePerQuestion);
-}
-
-async function endGame() {
-    const finalScore = `
-        <div class="final-score">
-            <h2>Oyun Bitti!</h2>
-            <p>Toplam Puan: ${totalScore}</p>
-            <p>Doğru Sayısı: ${currentQuestion}/10</p>
-            <button onclick="window.location.href='index.html'">Ana Menüye Dön</button>
-        </div>
-    `;
-    showNotification(finalScore, true);
-
-    const name = userName;
-    if (!name) {
-        alert("İsim bulunamadı!");
-        return;
-    }
-
-    try {
-        // Puanı ve ismi API'ye gönder
-        const response = await fetch("http://localhost:5000/addUserPoint", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: name, score: totalScore })
-        });
-
-        const data = await response.json();
-        if (data.error) {
-            alert("Hata: " + data.error);
-        } else {
-            console.log("Puan başarıyla kaydedildi:", data);
-        }
-    } catch (error) {
-        console.error("İstek hatası:", error);
-        alert("Sunucuya bağlanılamadı!");
-    }
-}
-
-
-// Add this new function for game over
-async function showGameOver() {
-    const gameOverMessage = `
-        <div class="final-score">
-            <h2>Oyun Bitti!</h2>
-            <p>Haklarınız tükendi!</p>
-            <p>Toplam Puan: ${totalScore}</p>
-            <p>Doğru Sayısı: ${currentQuestion}/10</p>
-            <button onclick="window.location.href='index.html'">Ana Menüye Dön</button>
-        </div>
-    `;
-    showNotification(gameOverMessage, false);
-    const name = userName;
-    console.log(name);
-    if (!name) {
-        alert("İsim bulunamadı!");
-        return;
-    }
-var body = JSON.stringify({ name: name, score: totalScore })
-console.log(body)
-    try {
-        // Puanı ve ismi API'ye gönder
-        const response = await fetch("http://localhost:5051/addUserPoint", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            crossDomain: true,
-            body: body
-        });
-    } catch (error) {
-        console.error("İstek hatası:", error);
-    }
-}
-
-// Add this new function for final score
-async function showFinalScore() {
-    const finalScore = `
-        <div class="final-score">
-            <h2>Tebrikler! Tüm Soruları Tamamladınız!</h2>
-            <p>Toplam Puan: ${totalScore}</p>
-            <p>Doğru Sayısı: ${currentQuestion}/10</p>
-            <p>Kalan Canlar: ${lives}</p>
-            <button onclick="window.location.href='index.html'">Ana Menüye Dön</button>
-        </div>
-    `;
-    showNotification(finalScore, true);
-    const name = userName;
-    console.log(name);
-    if (!name) {
-        alert("İsim bulunamadı!");
-        return;
-    }
-var body = JSON.stringify({ name: name, score: totalScore })
-console.log(body)
-    try {
-        // Puanı ve ismi API'ye gönder
-        const response = await fetch("http://localhost:5051/addUserPoint", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            crossDomain: true,
-            body: body
-        });
-    } catch (error) {
-        console.error("İstek hatası:", error);
-    }
-}
-
-// Add this new function for main time up notification
-function showMainTimeUpNotification() {
-    clearInterval(questionTimer);
-    const gameOverMessage = `
-        <div class="final-score">
-            <h2>Süre Doldu - Oyun Bitti!</h2>
-            <p>100 saniyelik süreniz doldu!</p>
-            <p>Toplam Puan: ${totalScore}</p>
-            <p>Doğru Sayısı: ${currentQuestion}/10</p>
-            <button onclick="window.location.href='index.html'">Ana Menüye Dön</button>
-        </div>
-    `;
-    document.querySelector('.popup').style.display = 'none';
-    document.getElementById('time-up-notification').style.display = 'none';
-    showNotification(gameOverMessage, false);
-}
-
-// Add this new function for time up notification
-function showTimeUpNotification() {
-    clearInterval(questionTimer);
-    const timeUpNotification = document.getElementById('time-up-notification');
-    timeUpNotification.style.display = 'block';
-    document.querySelector('.overlay').style.display = 'block';
-    document.querySelector('.popup').style.display = 'none';
-    
-    lives--;
-    updateLivesDisplay();
-    
-    if (lives <= 0) {
-        showGameOver();
-        return;
-    }
-}
-
-// Add this new function for retrying time up question
-function retryTimeUpQuestion() {
-    document.getElementById('time-up-notification').style.display = 'none';
-    document.querySelector('.overlay').style.display = 'block';
-    document.querySelector('.popup').style.display = 'block';
-    questionStartTime = Date.now();
-    startQuestionTimer(maxTimePerQuestion);
-}
-
-// Add this new function for closing time up notification
-function closeTimeUpNotification() {
-    document.getElementById('time-up-notification').style.display = 'none';
-    document.querySelector('.overlay').style.display = 'none';
+    // ARTIK BURADA ARTIRIYORUZ (Hem doğru hem yanlış cevapta çalışır)
     currentQuestion++;
     
     if (currentQuestion >= questions.length) {
@@ -428,12 +234,122 @@ function closeTimeUpNotification() {
     }
 }
 
-// Event listeners
+function retryQuestion() {
+    document.getElementById('notification').style.display = 'none';
+    questionStartTime = Date.now();
+    startQuestionTimer(maxTimePerQuestion);
+}
+
+function showMainTimeUpNotification() {
+    clearInterval(questionTimer);
+    document.querySelector('.popup').style.display = 'none';
+    document.getElementById('time-up-notification').style.display = 'none';
+    
+    const notification = document.getElementById('notification');
+    notification.className = 'notification error';
+    
+    // Doğru sayısını currentQuestion yerine correctAnswersCount'tan alıyoruz
+    document.getElementById('notification-text').innerHTML = `
+        <div class="final-score">
+            <h2>Süre Doldu!</h2>
+            <p>Toplam Puan: ${totalScore}</p>
+            <p>Doğru Sayısı: ${correctAnswersCount}/10</p>
+            <button onclick="window.location.href='index.html'">Ana Menü</button>
+        </div>
+    `;
+    
+    notification.querySelector('.next-button').style.display = 'none';
+    notification.querySelector('.retry-button').style.display = 'none';
+    notification.style.display = 'block';
+}
+
+function showTimeUpNotification() {
+    lives--;
+    updateLivesDisplay();
+    
+    if (lives <= 0) {
+        showGameOver();
+    } else {
+        document.getElementById('time-up-notification').style.display = 'block';
+        document.querySelector('.overlay').style.display = 'block';
+        document.querySelector('.popup').style.display = 'none';
+    }
+}
+
+function retryTimeUpQuestion() {
+    document.getElementById('time-up-notification').style.display = 'none';
+    document.querySelector('.popup').style.display = 'block';
+    questionStartTime = Date.now();
+    startQuestionTimer(maxTimePerQuestion);
+}
+
+function closeTimeUpNotification() {
+    document.getElementById('time-up-notification').style.display = 'none';
+    currentQuestion++; // Zaman dolup geçilirse de artır
+    if (currentQuestion >= questions.length) {
+        showFinalScore();
+    } else {
+        loadQuestion();
+    }
+}
+
+async function showGameOver() {
+    const notification = document.getElementById('notification');
+    notification.className = 'notification error';
+    
+    document.getElementById('notification-text').innerHTML = `
+        <div class="final-score">
+            <h2>Oyun Bitti!</h2>
+            <p>Haklarınız tükendi.</p>
+            <p>Toplam Puan: ${totalScore}</p>
+            <p>Doğru Sayısı: ${correctAnswersCount}/10</p>
+            <button onclick="window.location.href='index.html'">Ana Menü</button>
+        </div>
+    `;
+    
+    notification.querySelector('.notification-buttons').style.display = 'none';
+    notification.style.display = 'block';
+    
+    sendScoreToAPI();
+}
+
+async function showFinalScore() {
+    const notification = document.getElementById('notification');
+    notification.className = 'notification success';
+    
+    document.getElementById('notification-text').innerHTML = `
+        <div class="final-score">
+            <h2>Tebrikler!</h2>
+            <p>Tüm sorular tamamlandı.</p>
+            <p>Toplam Puan: ${totalScore}</p>
+            <p>Doğru Sayısı: ${correctAnswersCount}/10</p>
+            <button onclick="window.location.href='index.html'">Ana Menü</button>
+        </div>
+    `;
+    
+    notification.querySelector('.notification-buttons').style.display = 'none';
+    notification.style.display = 'block';
+    
+    sendScoreToAPI();
+}
+
+async function sendScoreToAPI() {
+    if(!userName) return;
+    try {
+        await fetch("http://localhost:5051/addUserPoint", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: userName, score: totalScore })
+        });
+    } catch (e) {
+        console.error(e);
+    }
+}
+
 document.getElementById('show-map-button').addEventListener('click', function() {
     document.querySelector('.popup').style.display = 'none';
     document.querySelector('.overlay').style.display = 'none';
     questionStartTime = Date.now();
 });
 
-// Initialize game when page loads
 window.onload = startGame;
