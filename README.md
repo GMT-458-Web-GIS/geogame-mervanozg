@@ -1,11 +1,11 @@
 # <div align="center">🌍✨ **GeoHunt – Interactive Geography Game** ✨🌍
 
 ### GMT 458 – Web GIS • Assignment 2
-
+https://gmt-458-web-gis.github.io/geogame-mervanozg/
 </div>
 
 <div align="center">
-  <img src="assets/logo.png" alt="GeoHunt Logo" width="260"/>
+  <img src="assets/logo.png" alt="GeoHunt Logo" width="400"/>
 </div>
 
 <p align="center">
@@ -118,9 +118,4 @@ Players select the province by clicking directly on the map.
 
 ---
 
-# 🚀 **6. Live Demo**
-
-🎮 SOON
-
----
 
