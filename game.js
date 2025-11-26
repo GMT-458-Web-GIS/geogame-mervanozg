@@ -3,8 +3,8 @@ let correctSound = new Audio('assets/correct.wav');
 let wrongSound = new Audio('assets/wrong.wav');
 let isMuted = false;
 
-let solvedCities = []; // Doğru bilip YEŞİL yaptığımız şehirler
-let missedCities = []; // Yanlış yapıp KIRMIZI (bilemediğimiz) olan şehirler
+let solvedCities = []; 
+let missedCities = []; 
 
 let timeLeft = 100;
 let questionTimer;
@@ -46,7 +46,6 @@ const questions = [
     { image: 'assets/24.jpeg', clue: 'Ayder Yaylası, çay bahçeleri ve Fırtına Deresi ile ünlü Karadeniz ilimiz hangisidir?', answer: 'Rize' }
 ];
 
-// Ses Aç/Kapa
 function toggleSound() {
     isMuted = !isMuted;
     const btn = document.getElementById('sound-toggle');
@@ -59,7 +58,6 @@ function toggleSound() {
     }
 }
 
-// Konfeti Efekti
 function triggerConfetti() {
     var count = 200;
     var defaults = { origin: { y: 0.7 } };
@@ -81,7 +79,6 @@ function countdown() {
         const timerElement = document.getElementById('timer');
         if (timeLeft <= 10) timerElement.classList.add('warning');
         else timerElement.classList.remove('warning');
-        
         timeLeft--;
         mainTimer = setTimeout(countdown, 1000);
     } else {
@@ -92,7 +89,7 @@ function countdown() {
 
 function startGame() {
     solvedCities = [];
-    missedCities = []; // Listeyi sıfırla
+    missedCities = [];
     totalScore = 0;
     currentQuestion = 0;
     correctAnswersCount = 0;
@@ -121,7 +118,9 @@ function loadQuestion() {
         return;
     }
     
-    // Haritayı merkeze al (reset)
+    // Her yeni soruda harita butonu gizlenmeli
+    document.getElementById('reopen-question-btn').style.display = 'none';
+
     map.flyTo([39.0, 35.0], 7, { animate: true, duration: 1.5 });
     
     const question = questions[currentQuestion];
@@ -181,9 +180,7 @@ $.getJSON('https://raw.githubusercontent.com/cihadturhan/tr-geojson/master/geo/t
 
     function checkAnswer(clickedCity) {
         clearInterval(questionTimer);
-        
-        let targetLayer; // Doğru cevabın katmanı
-
+        let targetLayer; 
         geojsonLayer.eachLayer(function(layer) {
             if(layer.feature.properties.name === currentCity) {
                 targetLayer = layer;
@@ -191,7 +188,7 @@ $.getJSON('https://raw.githubusercontent.com/cihadturhan/tr-geojson/master/geo/t
         });
 
         if (clickedCity === currentCity) {
-            // --- DOĞRU CEVAP ---
+            // DOĞRU
             if (!isMuted) correctSound.play();
 
             const timeElapsed = (Date.now() - questionStartTime) / 1000;
@@ -201,16 +198,13 @@ $.getJSON('https://raw.githubusercontent.com/cihadturhan/tr-geojson/master/geo/t
             
             document.querySelectorAll('#score').forEach(el => el.textContent = totalScore);
             
-            // --- YENİ KISIM: Can Yenileme Mantığı ---
             let extraMsg = "";
-            if (lives < 3) { // Eğer can 3'ten azsa
-                lives++;    // 1 can ekle
+            if (lives < 3) {
+                lives++;
                 updateLivesDisplay();
-                extraMsg = "<br>❤️ Can Yenilendi!"; // Mesaja ekle
+                extraMsg = "<br>❤️ Can Yenilendi!";
             }
-            // ----------------------------------------
-            
-            // YEŞİL YAP
+
             solvedCities.push(clickedCity);
             if(targetLayer) {
                 targetLayer.setStyle({ fillColor: "#2ecc71", fillOpacity: 0.8, color: "#fff", weight: 2 });
@@ -224,34 +218,26 @@ $.getJSON('https://raw.githubusercontent.com/cihadturhan/tr-geojson/master/geo/t
             }
 
         } else {
-            // --- YANLIŞ CEVAP ---
+            // YANLIŞ
             if (!isMuted) wrongSound.play();
 
             lives--;
             updateLivesDisplay();
 
-            // 1. Bizim seçtiğimiz şehri BOYAMA (şeffaf kalsın)
-
-            // 2. Bilemediğimiz SORUNUN DOĞRU CEVABINI Kırmızı Yap
             if(targetLayer) {
-                missedCities.push(currentCity); // Bilemediğimiz şehri listeye ekle
-                
-                // Şehri KIRMIZI'ya boya (#e74c3c)
+                missedCities.push(currentCity); 
                 targetLayer.setStyle({ 
-                    fillColor: "#e74c3c", // Kırmızı
+                    fillColor: "#e74c3c", 
                     fillOpacity: 0.8, 
                     color: "#fff", 
                     weight: 2 
                 });
-                
-                // Haritayı doğru ama bilemediğimiz şehre zoomla
                 map.flyTo(targetLayer.getBounds().getCenter(), 8, { animate: true, duration: 1.5 });
             }
             
             if (lives <= 0) {
                 showGameOver();
             } else {
-                // Bildirim
                 showNotification(`Yanlış! Doğru cevap <b>${currentCity}</b> iliydi. <br>${lives} canınız kaldı.`, false, false);
             }
         }
@@ -263,19 +249,16 @@ $.getJSON('https://raw.githubusercontent.com/cihadturhan/tr-geojson/master/geo/t
             var cityName = feature.properties.name;
             layer.on({
                 mouseover: function(e) {
-                    // Yeşil (bilinen) veya Kırmızı (kaçırılan) değilse sarı yak
                     if (!solvedCities.includes(cityName) && !missedCities.includes(cityName)) {
                         e.target.setStyle({ fillColor: "#ffc107", fillOpacity: 0.7 });
                     }
                 },
                 mouseout: function(e) {
-                    // Rengi eski haline döndür (ama kalıcı boyananlara dokunma)
                     if (!solvedCities.includes(cityName) && !missedCities.includes(cityName)) {
                         geojsonLayer.resetStyle(e.target);
                     }
                 },
                 click: function(e) {
-                    // Daha önce çözülmüş veya kaçırılmış şehre tıklanmasın
                     if (solvedCities.includes(cityName) || missedCities.includes(cityName)) return;
                     checkAnswer(cityName);
                 }
@@ -294,6 +277,9 @@ function calculateTimeBasedScore(timeElapsed) {
 }
 
 function showNotification(message, isSuccess, showRetry = false) {
+    // Bildirim gelince "Soruyu Gör" butonunu gizle
+    document.getElementById('reopen-question-btn').style.display = 'none';
+
     const notification = document.getElementById('notification');
     const notificationText = document.getElementById('notification-text');
     const nextButton = notification.querySelector('.next-button');
@@ -307,7 +293,6 @@ function showNotification(message, isSuccess, showRetry = false) {
         retryButton.style.display = 'none';
     } else {
         notification.classList.add('error');
-        // Tekrar dene butonu kapalı, sadece İleri
         retryButton.style.display = 'none'; 
         nextButton.style.display = 'block';
     }
@@ -441,10 +426,24 @@ async function sendScoreToAPI() {
     }
 }
 
+// YENİ: Haritayı Göster Butonuna Basınca
 document.getElementById('show-map-button').addEventListener('click', function() {
     document.querySelector('.popup').style.display = 'none';
     document.querySelector('.overlay').style.display = 'none';
+    
+    // "Soruyu Gör" butonunu görünür yap
+    document.getElementById('reopen-question-btn').style.display = 'block';
+    
     questionStartTime = Date.now();
 });
+
+// YENİ: Soruyu Tekrar Göster Butonu
+function reopenQuestion() {
+    document.querySelector('.popup').style.display = 'block';
+    document.querySelector('.overlay').style.display = 'block';
+    
+    // Kendisini gizle
+    document.getElementById('reopen-question-btn').style.display = 'none';
+}
 
 window.onload = startGame;

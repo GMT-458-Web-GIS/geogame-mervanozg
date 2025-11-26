@@ -1,5 +1,5 @@
 /* Google Font Eklemesi */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&family=Playfair+Display:wght@700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&family=Orbitron:wght@700;900&display=swap');
 
 /* --- Animasyonlar --- */
 
@@ -8,7 +8,6 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* YENİ: Kalp Atışı Animasyonu */
 @keyframes heartbeat {
     0% { transform: scale(1); }
     15% { transform: scale(1.3); }
@@ -33,6 +32,11 @@
     to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+}
+
 /* --- Genel Sayfa Yapısı --- */
 html, body {
     margin: 0;
@@ -48,33 +52,55 @@ html, body {
 
 /* --- HEADER (ÜST BAR) TASARIMI --- */
 #header {
-    background: linear-gradient(90deg, #4236b1 0%, #2a237a 50%, #3f2f8f 100%);
+    background: linear-gradient(90deg, #1e1e2f 0%, #2a237a 50%, #1e1e2f 100%);
     color: white;
-    height: 90px;
+    height: 100px; /* Header biraz yükseltildi */
     width: 100%;
     padding: 0 30px;
     box-sizing: border-box;
     display: grid;
     grid-template-columns: 1fr auto 1fr; 
     align-items: center;
-    box-shadow: 0 8px 30px rgba(66, 54, 177, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     z-index: 10;
     backdrop-filter: blur(10px);
     border-bottom: 2px solid rgba(136, 243, 243, 0.2);
     animation: slideDown 0.6s ease-out;
 }
 
-#header::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(90deg, transparent 0%, rgba(136, 243, 243, 0.15) 50%, transparent 100%);
-    opacity: 0; pointer-events: none;
-    animation: shimmer 3s ease-in-out infinite;
+/* GÜNCELLENEN LOGO STİLİ */
+.header-logo {
+    height: 70px; /* Logo büyütüldü */
+    width: auto;
+    margin-right: 15px;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+    animation: float 3s ease-in-out infinite;
 }
 
-#header::after {
-    content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px;
-    background: linear-gradient(90deg, transparent, rgba(136, 243, 243, 0.6), transparent);
-    animation: shimmer 2s ease-in-out infinite;
+.header-center {
+    justify-self: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* GÜNCELLENEN BAŞLIK STİLİ */
+#header-title {
+    font-family: 'Orbitron', sans-serif; /* Daha teknolojik bir font */
+    font-size: 38px;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    /* Neon Efekti */
+    text-shadow: 
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px #00d2ff,
+        0 0 40px #00d2ff;
+    margin: 0;
 }
 
 .header-left {
@@ -91,51 +117,28 @@ html, body {
     text-shadow: 0 0 15px rgba(255, 107, 107, 0.6);
 }
 
-.header-center {
-    justify-self: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-#header-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 26px;
-    font-weight: 900;
-    background: linear-gradient(90deg, #88F3F3 0%, #ffffff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 4px 15px rgba(136, 243, 243, 0.3);
-    margin: 0;
-    letter-spacing: 2px;
-}
-
 #timer-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    background: rgba(0, 0, 0, 0.25);
-    padding: 5px 15px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 8px 20px;
     border-radius: 20px;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.5);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
 }
 
 .timer-icon {
     font-size: 18px;
-    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
 }
 
 #timer {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 900;
     color: #ffd700;
     min-width: 40px;
     text-align: center;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
 }
 
 #timer.warning {
@@ -154,7 +157,7 @@ html, body {
     font-size: 18px;
     font-weight: 700;
     color: #4ade80;
-    background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), transparent);
+    background: rgba(0, 0, 0, 0.3);
     padding: 10px 20px;
     border-radius: 12px;
     border: 1px solid rgba(74, 222, 128, 0.3);
@@ -167,10 +170,60 @@ html, body {
     color: #fff;
 }
 
+/* Ses Butonu */
+.sound-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    margin-right: 15px;
+    transition: all 0.3s ease;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sound-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.sound-btn.muted {
+    background: rgba(231, 76, 60, 0.3);
+    border-color: #e74c3c;
+    opacity: 0.7;
+}
+
+/* --- MAP VE DİĞERLERİ --- */
 #map {
     width: 100%;
     flex-grow: 1;
     background-color: #1a1a1a;
+}
+
+/* YENİ: Soruyu Tekrar Görme Butonu */
+#reopen-question-btn {
+    display: none; /* Başlangıçta gizli */
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 500;
+    background: linear-gradient(135deg, #8e44ad, #9b59b6);
+    padding: 15px 30px;
+    font-size: 18px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    border: 2px solid rgba(255,255,255,0.2);
+    animation: fadeInUp 0.5s ease;
+}
+
+#reopen-question-btn:hover {
+    transform: translateX(-50%) scale(1.05);
 }
 
 .city-label {
@@ -199,10 +252,7 @@ html, body {
     background: rgba(0, 0, 0, 0.85);
     z-index: 999;
     backdrop-filter: blur(5px);
-    animation: fadeIn 0.3s ease;
 }
-
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 .popup, .notification {
     display: none;
@@ -217,13 +267,11 @@ html, body {
     text-align: center;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
     border: 2px solid rgba(136, 243, 243, 0.3);
-    animation: popInNoMove 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
 
 .notification.success {
     background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%) !important;
     border: 2px solid #2ecc71 !important;
-    box-shadow: 0 0 30px rgba(46, 204, 113, 0.4) !important;
 }
 
 .notification.success #notification-text {
@@ -235,7 +283,6 @@ html, body {
 .notification.error {
     background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
     border: 2px solid #c0392b !important;
-    box-shadow: 0 0 30px rgba(231, 76, 60, 0.4) !important;
 }
 
 .notification.error #notification-text {
@@ -268,7 +315,6 @@ html, body {
     object-fit: cover;
     margin-bottom: 20px;
     border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
 .popup-content p {
@@ -297,8 +343,6 @@ button:hover {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
-button:active { transform: translateY(-1px); }
-
 #show-map-button {
     background: linear-gradient(135deg, #3498db, #2980b9);
     width: 100%;
@@ -312,64 +356,12 @@ button:active { transform: translateY(-1px); }
     gap: 15px;
 }
 
-.next-button {
-    background: linear-gradient(135deg, #2ecc71, #27ae60);
-}
-
-.retry-button {
-    background: linear-gradient(135deg, #f39c12, #d35400);
-}
+.next-button { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+.retry-button { background: linear-gradient(135deg, #f39c12, #d35400); }
 
 .final-score { text-align: center; color: #333; }
 .final-score h2 { font-size: 28px; margin-bottom: 15px; color: #2c3e50; }
 .final-score button {
     background: linear-gradient(135deg, #8e44ad, #9b59b6);
     margin-top: 20px;
-}
-
-/* --- YENİ EKLENEN STİLLER --- */
-
-/* Header'daki Logo Ayarı */
-.header-logo {
-    height: 40px;
-    width: auto;
-    margin-right: 10px;
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
-    animation: float 3s ease-in-out infinite;
-}
-
-/* Header Center Düzeni */
-.header-center {
-    flex-direction: row !important;
-    gap: 15px !important;
-}
-
-/* Ses Butonu Tasarımı */
-.sound-btn {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 8px 12px;
-    border-radius: 50%;
-    margin-right: 15px;
-    transition: all 0.3s ease;
-    width: 45px;
-    height: 45px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.sound-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.1);
-    box-shadow: 0 0 10px rgba(136, 243, 243, 0.5);
-}
-
-.sound-btn.muted {
-    background: rgba(231, 76, 60, 0.3);
-    border-color: #e74c3c;
-    opacity: 0.7;
 }
