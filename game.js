@@ -1,10 +1,17 @@
-// Game state variables
+// Ses ve Oyun Durumu Değişkenleri
+let correctSound = new Audio('assets/correct.wav'); 
+let wrongSound = new Audio('assets/wrong.wav');
+let isMuted = false;
+
+let solvedCities = []; // Doğru bilip YEŞİL yaptığımız şehirler
+let missedCities = []; // Yanlış yapıp KIRMIZI (bilemediğimiz) olan şehirler
+
 let timeLeft = 100;
 let questionTimer;
 let totalScore = 0;
 let userName = window.name;
 let currentQuestion = 0;
-let correctAnswersCount = 0; // YENİ: Doğru cevap sayacı
+let correctAnswersCount = 0;
 let currentCity = '';
 let questionStartTime;
 const maxTimePerQuestion = 15;
@@ -12,7 +19,6 @@ const maxScorePerQuestion = 1000;
 let lives = 3;
 let mainTimer;
 
-// Questions array
 const questions = [
     { image: 'assets/1.jpeg', clue: 'Topkapı Sarayı, Osmanlı İmparatorları\'nın yaşadığı yer hangi ilimizdedir?', answer: 'İstanbul' },
     { image: 'assets/2.jpeg', clue: 'Türkiye Cumhuriyeti\'nin kurucusu Mustafa Kemal Atatürk\'ün mezarı Anıtkabir hangi ilimizdedir?', answer: 'Ankara' },
@@ -23,20 +29,58 @@ const questions = [
     { image: 'assets/7.jpeg', clue: 'Sazova bilim kültür ve sanat parkı hangi ilimizdedir?', answer: 'Eskişehir' },
     { image: 'assets/8.jpeg', clue: 'Aspendos Tiyatrosu hangi tarihi kente aittir?', answer: 'Antalya' },
     { image: 'assets/9.jpeg', clue: 'UNESCO Dünya Mirası Listesi\'nde yer alan ve Osmanlı dönemine ait geleneksel evleriyle ünlü Safranbolu hangi ilimizdedir?', answer: 'Karabük' },
-    { image: 'assets/10.jpeg', clue: 'Kayaların içinde inşa edilmiş olan Sumela manastır, Karadeniz bölgesinde hangi şehirde yer alır?', answer: 'Trabzon' }
+    { image: 'assets/10.jpg', clue: 'Kayaların içinde inşa edilmiş olan Sumela manastır, Karadeniz bölgesinde hangi şehirde yer alır?', answer: 'Trabzon' },
+    { image: 'assets/11.jpg', clue: 'Mevlana Müzesi ve hoşgörü kenti olarak bilinen ilimiz hangisidir?', answer: 'Konya' },
+    { image: 'assets/12.jpg', clue: 'Efsanevi Truva Atı\'na ev sahipliği yapan ve şehitler diyarı olarak bilinen ilimiz hangisidir?', answer: 'Çanakkale' },
+    { image: 'assets/13.jpg', clue: 'Dünyaca ünlü Zeugma Mozaik Müzesi ve mutfağıyla meşhur ilimiz hangisidir?', answer: 'Gaziantep' },
+    { image: 'assets/14.jpg', clue: 'Gün doğumu ve batımının en güzel izlendiği Nemrut Dağı heykelleri hangi ilimizdedir?', answer: 'Adıyaman' },
+    { image: 'assets/15.jpg', clue: 'Binbir Kilise Şehri olarak bilinen Ani Harabeleri hangi sınır şehrimizde yer alır?', answer: 'Kars' },
+    { image: 'assets/16.jpg', clue: 'Osmanlı\'nın ilk başkentlerinden olan, Ulu Cami ve kış turizmi merkezi Uludağ ile ünlü ilimiz hangisidir?', answer: 'Bursa' },
+    { image: 'assets/17.jpg', clue: 'Türkiye\'nin en yüksek dağı olan Ağrı Dağı ve İshak Paşa Sarayı hangi ilimizdedir?', answer: 'Ağrı' },
+    { image: 'assets/18.jpg', clue: 'Ölüdeniz, Bodrum ve Marmaris gibi turizm cennetlerine ev sahipliği yapan ilimiz hangisidir?', answer: 'Muğla' },
+    { image: 'assets/19.jpg', clue: 'Kendine has taş mimarisi ve tarihi dokusuyla büyüleyen, Mezopotamya\'nın incisi şehrimiz hangisidir?', answer: 'Mardin' },
+    { image: 'assets/20.jpg', clue: 'Seyhan nehri üzerindeki tarihi Taş Köprü ile bilinen ve kebabıyla ünlü şehrimiz hangisidir?', answer: 'Adana' },
+    { image: 'assets/21.jpg', clue: 'UNESCO listesindeki Divriği Ulu Camii ve Darüşşifası hangi ilimizdedir?', answer: 'Sivas' },
+    { image: 'assets/22.jpg', clue: 'Hitit İmparatorluğu\'nun başkenti Hattuşaş\'a ev sahipliği yapan ilimiz hangisidir?', answer: 'Çorum' },
+    { image: 'assets/23.jpg', clue: 'Denizin ortasındaki Kızkalesi ile tanınan Akdeniz şehrimiz hangisidir?', answer: 'Mersin' },
+    { image: 'assets/24.jpeg', clue: 'Ayder Yaylası, çay bahçeleri ve Fırtına Deresi ile ünlü Karadeniz ilimiz hangisidir?', answer: 'Rize' }
 ];
 
-// Basic timer function
+// Ses Aç/Kapa
+function toggleSound() {
+    isMuted = !isMuted;
+    const btn = document.getElementById('sound-toggle');
+    if (isMuted) {
+        btn.innerText = '🔇';
+        btn.classList.add('muted');
+    } else {
+        btn.innerText = '🔊';
+        btn.classList.remove('muted');
+    }
+}
+
+// Konfeti Efekti
+function triggerConfetti() {
+    var count = 200;
+    var defaults = { origin: { y: 0.7 } };
+    function fire(particleRatio, opts) {
+        confetti(Object.assign({}, defaults, opts, {
+            particleCount: Math.floor(count * particleRatio)
+        }));
+    }
+    fire(0.25, { spread: 26, startVelocity: 55 });
+    fire(0.2, { spread: 60 });
+    fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+    fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+    fire(0.1, { spread: 120, startVelocity: 45 });
+}
+
 function countdown() {
     if (timeLeft >= 0) {
         document.getElementById('timer').innerText = timeLeft;
         const timerElement = document.getElementById('timer');
-        
-        if (timeLeft <= 10) {
-            timerElement.classList.add('warning');
-        } else {
-            timerElement.classList.remove('warning');
-        }
+        if (timeLeft <= 10) timerElement.classList.add('warning');
+        else timerElement.classList.remove('warning');
         
         timeLeft--;
         mainTimer = setTimeout(countdown, 1000);
@@ -46,11 +90,12 @@ function countdown() {
     }
 }
 
-// Game initialization
 function startGame() {
+    solvedCities = [];
+    missedCities = []; // Listeyi sıfırla
     totalScore = 0;
     currentQuestion = 0;
-    correctAnswersCount = 0; // Sıfırla
+    correctAnswersCount = 0;
     lives = 3;
     timeLeft = 100;
     shuffleArray(questions);
@@ -67,16 +112,17 @@ function shuffleArray(array) {
 }
 
 function updateLivesDisplay() {
-    const livesElement = document.getElementById('lives-display');
-    livesElement.textContent = '❤'.repeat(lives);
+    document.getElementById('lives-display').textContent = '❤'.repeat(lives);
 }
 
 function loadQuestion() {
-    // Güvenlik kontrolü
     if (currentQuestion >= questions.length) {
         showFinalScore();
         return;
     }
+    
+    // Haritayı merkeze al (reset)
+    map.flyTo([39.0, 35.0], 7, { animate: true, duration: 1.5 });
     
     const question = questions[currentQuestion];
     currentCity = question.answer;
@@ -105,7 +151,6 @@ function startQuestionTimer(seconds) {
     }, 1000);
 }
 
-// Map setup
 var map = L.map('map', {
     center: [39.0, 35.0],
     zoom: 7,
@@ -119,9 +164,10 @@ var map = L.map('map', {
 });
 
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    maxZoom: 10,
-    minZoom: 6
+    maxZoom: 10, minZoom: 6
 }).addTo(map);
+
+var geojsonLayer;
 
 $.getJSON('https://raw.githubusercontent.com/cihadturhan/tr-geojson/master/geo/tr-cities-utf8.json', function(data) {
     function style(feature) {
@@ -136,51 +182,101 @@ $.getJSON('https://raw.githubusercontent.com/cihadturhan/tr-geojson/master/geo/t
     function checkAnswer(clickedCity) {
         clearInterval(questionTimer);
         
+        let targetLayer; // Doğru cevabın katmanı
+
+        geojsonLayer.eachLayer(function(layer) {
+            if(layer.feature.properties.name === currentCity) {
+                targetLayer = layer;
+            }
+        });
+
         if (clickedCity === currentCity) {
+            // --- DOĞRU CEVAP ---
+            if (!isMuted) correctSound.play();
+
             const timeElapsed = (Date.now() - questionStartTime) / 1000;
             const pointsEarned = calculateTimeBasedScore(timeElapsed);
             totalScore += pointsEarned;
-            
-            // Doğru cevap sayacını artır
             correctAnswersCount++;
             
             document.querySelectorAll('#score').forEach(el => el.textContent = totalScore);
             
-            // DÜZELTME: Soru indeksini burada artırmıyoruz. 
-            // Kullanıcı "Sıradaki Soru" butonuna basınca nextQuestion() içinde artacak.
-            // Sadece son soruysa oyun bitmeli.
+            // --- YENİ KISIM: Can Yenileme Mantığı ---
+            let extraMsg = "";
+            if (lives < 3) { // Eğer can 3'ten azsa
+                lives++;    // 1 can ekle
+                updateLivesDisplay();
+                extraMsg = "<br>❤️ Can Yenilendi!"; // Mesaja ekle
+            }
+            // ----------------------------------------
+            
+            // YEŞİL YAP
+            solvedCities.push(clickedCity);
+            if(targetLayer) {
+                targetLayer.setStyle({ fillColor: "#2ecc71", fillOpacity: 0.8, color: "#fff", weight: 2 });
+            }
             
             if (currentQuestion >= questions.length - 1) {
-                // Son soruyu bildi, indeksi artırıp bitiriyoruz
                 currentQuestion++;
                 showFinalScore();
             } else {
-                showNotification(`Doğru! ${pointsEarned} puan kazandınız.`, true);
+                showNotification(`Doğru! ${pointsEarned} puan kazandınız.${extraMsg}`, true);
             }
+
         } else {
+            // --- YANLIŞ CEVAP ---
+            if (!isMuted) wrongSound.play();
+
             lives--;
             updateLivesDisplay();
+
+            // 1. Bizim seçtiğimiz şehri BOYAMA (şeffaf kalsın)
+
+            // 2. Bilemediğimiz SORUNUN DOĞRU CEVABINI Kırmızı Yap
+            if(targetLayer) {
+                missedCities.push(currentCity); // Bilemediğimiz şehri listeye ekle
+                
+                // Şehri KIRMIZI'ya boya (#e74c3c)
+                targetLayer.setStyle({ 
+                    fillColor: "#e74c3c", // Kırmızı
+                    fillOpacity: 0.8, 
+                    color: "#fff", 
+                    weight: 2 
+                });
+                
+                // Haritayı doğru ama bilemediğimiz şehre zoomla
+                map.flyTo(targetLayer.getBounds().getCenter(), 8, { animate: true, duration: 1.5 });
+            }
             
             if (lives <= 0) {
                 showGameOver();
             } else {
-                showNotification(`Yanlış cevap! ${lives} hakkınız kaldı.`, false, true);
+                // Bildirim
+                showNotification(`Yanlış! Doğru cevap <b>${currentCity}</b> iliydi. <br>${lives} canınız kaldı.`, false, false);
             }
         }
     }
 
-    var geojsonLayer = L.geoJson(data, {
+    geojsonLayer = L.geoJson(data, {
         style: style,
         onEachFeature: function (feature, layer) {
             var cityName = feature.properties.name;
             layer.on({
                 mouseover: function(e) {
-                    e.target.setStyle({ fillColor: "#ffc107", fillOpacity: 0.7 });
+                    // Yeşil (bilinen) veya Kırmızı (kaçırılan) değilse sarı yak
+                    if (!solvedCities.includes(cityName) && !missedCities.includes(cityName)) {
+                        e.target.setStyle({ fillColor: "#ffc107", fillOpacity: 0.7 });
+                    }
                 },
                 mouseout: function(e) {
-                    geojsonLayer.resetStyle(e.target);
+                    // Rengi eski haline döndür (ama kalıcı boyananlara dokunma)
+                    if (!solvedCities.includes(cityName) && !missedCities.includes(cityName)) {
+                        geojsonLayer.resetStyle(e.target);
+                    }
                 },
                 click: function(e) {
+                    // Daha önce çözülmüş veya kaçırılmış şehre tıklanmasın
+                    if (solvedCities.includes(cityName) || missedCities.includes(cityName)) return;
                     checkAnswer(cityName);
                 }
             });
@@ -197,7 +293,6 @@ function calculateTimeBasedScore(timeElapsed) {
     return Math.max(0, score);
 }
 
-// Notification Sistemi
 function showNotification(message, isSuccess, showRetry = false) {
     const notification = document.getElementById('notification');
     const notificationText = document.getElementById('notification-text');
@@ -212,7 +307,8 @@ function showNotification(message, isSuccess, showRetry = false) {
         retryButton.style.display = 'none';
     } else {
         notification.classList.add('error');
-        retryButton.style.display = 'block'; 
+        // Tekrar dene butonu kapalı, sadece İleri
+        retryButton.style.display = 'none'; 
         nextButton.style.display = 'block';
     }
     
@@ -220,11 +316,8 @@ function showNotification(message, isSuccess, showRetry = false) {
     notification.style.display = 'block';
 }
 
-// DÜZELTME: Sıradaki soruya geçiş mantığı
 function nextQuestion() {
     document.getElementById('notification').style.display = 'none';
-    
-    // ARTIK BURADA ARTIRIYORUZ (Hem doğru hem yanlış cevapta çalışır)
     currentQuestion++;
     
     if (currentQuestion >= questions.length) {
@@ -236,6 +329,7 @@ function nextQuestion() {
 
 function retryQuestion() {
     document.getElementById('notification').style.display = 'none';
+    map.flyTo([39.0, 35.0], 7, { duration: 1 });
     questionStartTime = Date.now();
     startQuestionTimer(maxTimePerQuestion);
 }
@@ -248,12 +342,11 @@ function showMainTimeUpNotification() {
     const notification = document.getElementById('notification');
     notification.className = 'notification error';
     
-    // Doğru sayısını currentQuestion yerine correctAnswersCount'tan alıyoruz
     document.getElementById('notification-text').innerHTML = `
         <div class="final-score">
             <h2>Süre Doldu!</h2>
             <p>Toplam Puan: ${totalScore}</p>
-            <p>Doğru Sayısı: ${correctAnswersCount}/10</p>
+            <p>Doğru Sayısı: ${correctAnswersCount}/${questions.length}</p>
             <button onclick="window.location.href='index.html'">Ana Menü</button>
         </div>
     `;
@@ -285,7 +378,7 @@ function retryTimeUpQuestion() {
 
 function closeTimeUpNotification() {
     document.getElementById('time-up-notification').style.display = 'none';
-    currentQuestion++; // Zaman dolup geçilirse de artır
+    currentQuestion++;
     if (currentQuestion >= questions.length) {
         showFinalScore();
     } else {
@@ -302,7 +395,7 @@ async function showGameOver() {
             <h2>Oyun Bitti!</h2>
             <p>Haklarınız tükendi.</p>
             <p>Toplam Puan: ${totalScore}</p>
-            <p>Doğru Sayısı: ${correctAnswersCount}/10</p>
+            <p>Doğru Sayısı: ${correctAnswersCount}/${questions.length}</p>
             <button onclick="window.location.href='index.html'">Ana Menü</button>
         </div>
     `;
@@ -314,6 +407,8 @@ async function showGameOver() {
 }
 
 async function showFinalScore() {
+    triggerConfetti();
+
     const notification = document.getElementById('notification');
     notification.className = 'notification success';
     
@@ -322,7 +417,7 @@ async function showFinalScore() {
             <h2>Tebrikler!</h2>
             <p>Tüm sorular tamamlandı.</p>
             <p>Toplam Puan: ${totalScore}</p>
-            <p>Doğru Sayısı: ${correctAnswersCount}/10</p>
+            <p>Doğru Sayısı: ${correctAnswersCount}/${questions.length}</p>
             <button onclick="window.location.href='index.html'">Ana Menü</button>
         </div>
     `;

@@ -5,14 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nasıl Oynanır ?</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Kuralların daha düzenli görünmesi için ufak bir stil eklemesi */
+        .rules-list {
+            text-align: left;
+            max-width: 650px;
+            margin: 20px auto;
+            font-size: 18px;
+            line-height: 1.6;
+            color: #e0e0e0;
+            list-style: none; /* Standart noktaları kaldırdık */
+            padding: 0;
+        }
+        .rules-list li {
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(136, 243, 243, 0.1);
+            transition: transform 0.3s;
+        }
+        .rules-list li:hover {
+            transform: translateX(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(136, 243, 243, 0.3);
+        }
+        .highlight {
+            color: #88F3F3;
+            font-weight: 700;
+            font-size: 20px;
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>Nasıl Oynanır ?</h1>
-        <p class="description">
-             Oyunun amacı, harita üzerinde belirlenen ipuçlarını takip ederek doğru noktayı bulmaktır.
-            İpuçlarını dikkatlice okuyun, haritayı kullanarak hedefinize ulaşın ve doğru tahmin yaparak puan kazanın!
-        </p>
+        
+        <div class="description">
+            <p style="margin-bottom: 30px;">
+                Haritada gizlenmiş şehirleri ipuçlarını takiperek bulmaya hazır mısın? 
+                İşte kurallar:
+            </p>
+            
+            <ul class="rules-list">
+                <li>
+                    <span class="highlight">⚡ Hız Önemli!</span>
+                    Soruyu ne kadar <strong>erken cevaplarsanız</strong> o kadar yüksek puan (soru başına maks. 1000) kazanırsınız. Beklediğiniz her saniye puanınızı düşürür!
+                </li>
+                <li>
+                    <span class="highlight">❤ Can Sistemi</span>
+                    Oyuna <strong>3 can</strong> ile başlarsınız. Her yanlış tahmin bir canınızı götürür. Canlarınız biterse oyun sona erer.
+                </li>
+                <li>
+                    <span class="highlight">⏳ Zamana Karşı Yarış</span>
+                    Hem genel oyun süresi hem de her soru için ayrı cevaplama süreniz var. Süre dolmadan doğru şehri haritada işaretlemelisiniz.
+                </li>
+            </ul>
+        </div>
+        
         <a href="index.html" class="back-button">Geri Dön</a>
     </div>
 </body>

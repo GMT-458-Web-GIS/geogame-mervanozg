@@ -50,16 +50,13 @@ html, body {
 #header {
     background: linear-gradient(90deg, #4236b1 0%, #2a237a 50%, #3f2f8f 100%);
     color: white;
-    height: 90px; /* Sabit yükseklik */
+    height: 90px;
     width: 100%;
     padding: 0 30px;
-    box-sizing: border-box; /* Padding genişliği etkilemesin */
-    
-    /* Grid Sistemi: Sol, Orta ve Sağ olmak üzere 3 eşit parça */
+    box-sizing: border-box;
     display: grid;
     grid-template-columns: 1fr auto 1fr; 
     align-items: center;
-    
     box-shadow: 0 8px 30px rgba(66, 54, 177, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     z-index: 10;
     backdrop-filter: blur(10px);
@@ -67,7 +64,6 @@ html, body {
     animation: slideDown 0.6s ease-out;
 }
 
-/* Header Efektleri */
 #header::before {
     content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
     background: linear-gradient(90deg, transparent 0%, rgba(136, 243, 243, 0.15) 50%, transparent 100%);
@@ -81,30 +77,27 @@ html, body {
     animation: shimmer 2s ease-in-out infinite;
 }
 
-/* 1. SOL KISIM: Canlar */
 .header-left {
     justify-self: start;
-    padding-left: 50px; /* Ekranın solundan biraz içeri aldık */
+    padding-left: 50px;
 }
 
 #lives-display {
     font-size: 32px;
     color: #ff6b6b;
     letter-spacing: 5px;
-    /* Kalp atışı animasyonu */
     animation: heartbeat 2s infinite ease-in-out;
     cursor: default;
     text-shadow: 0 0 15px rgba(255, 107, 107, 0.6);
 }
 
-/* 2. ORTA KISIM: Başlık ve Süre */
 .header-center {
     justify-self: center;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px; /* Başlık ve süre arasındaki boşluk */
+    gap: 8px;
 }
 
 #header-title {
@@ -119,7 +112,6 @@ html, body {
     letter-spacing: 2px;
 }
 
-/* Süre Kapsayıcısı */
 #timer-wrapper {
     display: flex;
     align-items: center;
@@ -151,10 +143,11 @@ html, body {
     animation: pulse 0.5s infinite;
 }
 
-/* 3. SAĞ KISIM: Puan */
 .header-right {
     justify-self: end;
     padding-right: 20px;
+    display: flex;
+    align-items: center;
 }
 
 #score-container {
@@ -174,7 +167,6 @@ html, body {
     color: #fff;
 }
 
-/* --- HARİTA --- */
 #map {
     width: 100%;
     flex-grow: 1;
@@ -201,7 +193,6 @@ html, body {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8), 0 0 30px rgba(136, 243, 243, 0.4);
 }
 
-/* --- POPUP VE BİLDİRİMLER --- */
 .overlay {
     display: none;
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -229,7 +220,6 @@ html, body {
     animation: popInNoMove 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
 
-/* Doğru Cevap (Yeşil Tema) */
 .notification.success {
     background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%) !important;
     border: 2px solid #2ecc71 !important;
@@ -242,7 +232,6 @@ html, body {
     font-size: 20px;
 }
 
-/* YENİ: Yanlış Cevap (Kırmızı Tema) */
 .notification.error {
     background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
     border: 2px solid #c0392b !important;
@@ -255,7 +244,6 @@ html, body {
     font-size: 20px;
 }
 
-/* Popup İçeriği */
 .popup-header {
     display: flex;
     justify-content: space-between;
@@ -290,7 +278,6 @@ html, body {
     font-weight: 600;
 }
 
-/* --- Butonlar --- */
 button {
     padding: 12px 25px;
     border: none;
@@ -333,10 +320,56 @@ button:active { transform: translateY(-1px); }
     background: linear-gradient(135deg, #f39c12, #d35400);
 }
 
-/* Oyun Sonu Ekranı */
 .final-score { text-align: center; color: #333; }
 .final-score h2 { font-size: 28px; margin-bottom: 15px; color: #2c3e50; }
 .final-score button {
     background: linear-gradient(135deg, #8e44ad, #9b59b6);
     margin-top: 20px;
+}
+
+/* --- YENİ EKLENEN STİLLER --- */
+
+/* Header'daki Logo Ayarı */
+.header-logo {
+    height: 40px;
+    width: auto;
+    margin-right: 10px;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Header Center Düzeni */
+.header-center {
+    flex-direction: row !important;
+    gap: 15px !important;
+}
+
+/* Ses Butonu Tasarımı */
+.sound-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 50%;
+    margin-right: 15px;
+    transition: all 0.3s ease;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sound-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(136, 243, 243, 0.5);
+}
+
+.sound-btn.muted {
+    background: rgba(231, 76, 60, 0.3);
+    border-color: #e74c3c;
+    opacity: 0.7;
 }

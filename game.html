@@ -11,6 +11,7 @@
     <script src="https://unpkg.com/jquery"></script>
     <script src="https://unpkg.com/leaflet-ajax/dist/leaflet.ajax.min.js"></script>
     <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="game.js" defer></script>
 </head>
 <body>
@@ -20,6 +21,7 @@
         </div>
 
         <div class="header-center">
+            <img src="assets/logo.png" alt="GeoHunt Logo" class="header-logo">
             <div id="header-title">GeoHunt</div>
             <div id="timer-wrapper">
                 <span class="timer-icon">🕒</span>
@@ -28,6 +30,7 @@
         </div>
 
         <div class="header-right">
+            <button id="sound-toggle" class="sound-btn" onclick="toggleSound()">🔊</button>
             <div id="score-container">Toplam Puan: <span id="score">0</span></div>
         </div>
     </div>
